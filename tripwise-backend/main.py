@@ -3,9 +3,12 @@ load_dotenv()
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from contextlib import asynccontextmanager
 from app.database.db import engine, Base
 from app.routes import trips, attractions, auth, geocode
+import os
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -32,6 +35,10 @@ app.include_router(trips.router,       prefix="/api/trips",       tags=["Trips"]
 app.include_router(attractions.router, prefix="/api/attractions", tags=["Attractions"])
 app.include_router(geocode.router,     prefix="/api/geocode",     tags=["Geocode"])
 
-@app.get("/", tags=["Health"])
-def root():
+@app.get("/health", tags=["Health"])
+def health():
     return {"status": "ok", "message": "TripWise AI backend is running 🚀"}
+
+if os.path.exists("static"):
+    app.mount("/", StaticFiles(directory="static", html=True), name="static")
+    

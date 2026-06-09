@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: tripwise-ai
+    runtime: python
+    rootDir: tripwise-backend
+    buildCommand: "pip install -r requirements.txt && cd ../frontend && npm install && npm run build && cp -r dist ../tripwise-backend/static"
+    startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: UNSPLASH_ACCESS_KEY
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        value: sqlite:///./tripwise.db
