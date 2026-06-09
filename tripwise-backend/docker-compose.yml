@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: tripwise
+      POSTGRES_PASSWORD: tripwise
+      POSTGRES_DB: tripwise
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    restart: always
+    ports:
+      - "8000:8000"
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://tripwise:tripwise@db:5432/tripwise
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+
+volumes:
+  pg_data:
